@@ -25,6 +25,7 @@ namespace MVCTest
         public int UserId { get; set; }
         public string Text { get; set; }
         public System.DateTime Time { get; set; }
+        public Nullable<int> Forward { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Comments> Comments { get; set; }

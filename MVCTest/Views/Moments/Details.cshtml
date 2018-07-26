@@ -1,0 +1,50 @@
+﻿@model MVCTest.Notes
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Notes</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Text)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Text)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Time)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Time)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Forward)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Forward)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Users.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Users.Email)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.NoteId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

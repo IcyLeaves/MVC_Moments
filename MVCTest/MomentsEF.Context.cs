@@ -29,5 +29,7 @@ namespace MVCTest
         public virtual DbSet<Likes> Likes { get; set; }
         public virtual DbSet<Notes> Notes { get; set; }
         public virtual DbSet<Users> Users { get; set; }
+        public virtual DbSet<NoteDBs> NoteDBs { get; set; }
+        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
     }
 }

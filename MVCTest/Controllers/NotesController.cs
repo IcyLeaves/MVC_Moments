@@ -217,7 +217,6 @@ namespace MVCTest.Controllers
         //Partial Likes
         public PartialViewResult likes()
         {
-
             return PartialView("_LikesPartialView");
         }
 

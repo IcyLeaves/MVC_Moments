@@ -1,0 +1,77 @@
+﻿@model IEnumerable<MVCTest.Notes>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>朋友圈2.0</h2>
+
+<p>
+    @if (Request.IsAuthenticated)
+    {
+        @Html.ActionLink("发布朋友圈", "Create")
+    }
+    else
+    {
+        @Html.ActionLink("发布朋友圈", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
+    }
+</p>
+<hr style="height:1px;border:none;border-top:1px solid #555555;" />
+@{
+    IEnumerable<MVCTest.Notes> m = Model.OrderByDescending(i => i.Time);
+}
+@foreach (var item in m)
+{
+    <p><b>用户名：@Html.DisplayFor(modelItem => item.Users.Nickname)</b></p>
+    <p>@Html.DisplayFor(modelItem => item.Text)</p>
+    if (item.Forward != null)
+    {
+        List<Notes> ml = m.ToList();
+        Notes a = ml.Find(x => x.NoteId == item.Forward.Value);
+        <div style="background-color:rgba(100, 100, 100, 0.15);padding:10px 5px;"><b>@a.Users.Nickname</b>：@a.Text</div>
+    }
+    <p align="right">@Html.DisplayFor(modelItem => item.Time)</p>
+    var cnt = 0;
+    var likes = "";
+    foreach (var liker in item.Likes)
+    {
+        if (cnt != 0) { likes += ","; }
+        cnt++;
+        likes += liker.Users.Nickname;
+    }
+    if (cnt == 0)
+    {
+        likes = "无";
+    }
+    <p align="right">点赞者：@likes</p>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = item.NoteId }) |
+        @Html.ActionLink("Details", "Details", new { id = item.NoteId }) |
+        @Html.ActionLink("Delete", "Delete", new { id = item.NoteId }) |
+        @if (Request.IsAuthenticated)
+        {
+            var isFound = item.Likes.FirstOrDefault(liker => liker.Users.Email == User.Identity.GetUserName());
+            if (isFound != null)
+            {
+                <a id="@item.NoteId-LikeLink" href="javascript:void(0);" onclick="UnLikedClick(@item.NoteId,this)">取消点赞</a>
+            }
+            else
+            {
+                <a id="@item.NoteId-LikeLink" href="javascript:void(0);" onclick="LikedClick(@item.NoteId,this)">点赞</a>
+            }
+        }
+        else
+        {
+            @Html.ActionLink("点赞", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
+        } |
+        @if (Request.IsAuthenticated)
+        {
+            @Html.ActionLink("转发", "Relay", new { id = item.NoteId })
+        }
+        else
+        {
+            @Html.ActionLink("转发", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
+        }
+    </p>
+    <hr style="height:1px;border:none;border-top:1px solid #555555;" />
+}

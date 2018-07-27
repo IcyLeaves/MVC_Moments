@@ -1,0 +1,9 @@
+D:\2nd Computer 1602\暑期实习\MyMoments\MomentsService\bin\MomentsService.dll.config
+D:\2nd Computer 1602\暑期实习\MyMoments\MomentsService\bin\MomentsService.dll
+D:\2nd Computer 1602\暑期实习\MyMoments\MomentsService\bin\MomentsService.pdb
+D:\2nd Computer 1602\暑期实习\MyMoments\MomentsService\bin\EntityFramework.dll
+D:\2nd Computer 1602\暑期实习\MyMoments\MomentsService\bin\EntityFramework.xml
+D:\2nd Computer 1602\暑期实习\MyMoments\MomentsService\bin\zh-Hans\EntityFramework.resources.dll
+D:\2nd Computer 1602\暑期实习\MyMoments\MomentsService\obj\Debug\MomentsService.csprojResolveAssemblyReference.cache
+D:\2nd Computer 1602\暑期实习\MyMoments\MomentsService\obj\Debug\MomentsService.dll
+D:\2nd Computer 1602\暑期实习\MyMoments\MomentsService\obj\Debug\MomentsService.pdb

@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using MVCTest;
 using MVCTest.Repository;
+using Microsoft.AspNet.Identity;
 
 namespace MVCTest.Controllers
 {
@@ -21,7 +22,29 @@ namespace MVCTest.Controllers
         {
             return View(mo);
         }
+        
+        // GET: Moments/Liked/5
+        public JsonResult Liked(int id)
+        {
+            Notes n = mo.GetCurrentNote(id);
+            string username = User.Identity.GetUserName();
+            mo.AddLikes(n, username);
+            string ret = mo.GetLikesOnNote(n);
+            return new JsonResult(){ Data = ret, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        }
 
+        //GET: Moments/UnLiked/5
+        public JsonResult UnLiked(int id)
+        {
+            Notes n = mo.GetCurrentNote(id);
+            string username = User.Identity.GetUserName();
+            mo.SubLikes(n, username);
+            string ret = mo.GetLikesOnNote(n);
+            return new JsonResult() { Data = ret, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        }
+    }
+}
+/*
         // GET: Moments/Details/5
         public async Task<ActionResult> Details(int? id)
         {
@@ -125,5 +148,4 @@ namespace MVCTest.Controllers
             }
             base.Dispose(disposing);
         }
-    }
-}
+        */

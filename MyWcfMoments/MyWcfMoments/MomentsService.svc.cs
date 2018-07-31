@@ -18,7 +18,6 @@ namespace MyWcfMoments
         //     请添加 [WebGet(ResponseFormat=WebMessageFormat.Xml)]，
         //     并在操作正文中包括以下行:
         //         WebOperationContext.Current.OutgoingResponse.ContentType = "text/xml";
-        protected ICY_SqlEntities db = new ICY_SqlEntities();
         /// <summary>
         /// 登录校验
         /// </summary>
@@ -26,12 +25,19 @@ namespace MyWcfMoments
         /// <param name="Password"></param>
         /// <returns></returns>
         [OperationContract]
+        [WebGet]
         public bool LoginIn(string Email, string Password)
         {
-            Users user = db.Users.FirstOrDefault(u => u.Email == Email);
-            if (user == null) return false;
-            else if (user.Password != Password) return false;
-            else return true;
+            using (var db = new ICY_SqlEntities())
+            {
+                Users user = db.Users.FirstOrDefault(u => u.Email == Email);
+                if (user == null) return false;
+                else
+                {
+                    if (user.Password != Password) return false;
+                    else return true;
+                }
+            }
         }
         /// <summary>
         /// 查询所有帖子
@@ -41,7 +47,10 @@ namespace MyWcfMoments
         [WebGet]
         public IEnumerable<Notes> SelectAllNotes()
         {
-            return db.Notes.ToList();
+            using (var db = new ICY_SqlEntities())
+            {
+                return db.Notes.ToList();
+            }
         }
 
         /// <summary>
@@ -49,9 +58,13 @@ namespace MyWcfMoments
         /// </summary>
         /// <returns></returns>
         [OperationContract]
+        [WebGet]
         public IEnumerable<Notes> OrderAllNotesByDescending()
         {
-            return db.Notes.OrderByDescending(i => i.Time).ToList();
+            using (var db = new ICY_SqlEntities())
+            {
+                return db.Notes.OrderByDescending(i => i.Time).ToList();
+            }
         }
 
         /// <summary>
@@ -60,9 +73,13 @@ namespace MyWcfMoments
         /// <param name="noteId"></param>
         /// <returns></returns>
         [OperationContract]
+        [WebGet]
         public Notes GetCurrentNote(int noteId)
         {
-            return db.Notes.First(n => n.NoteId == noteId);
+            using (var db = new ICY_SqlEntities())
+            {
+                return db.Notes.FirstOrDefault(n => n.NoteId == noteId);
+            }
         }
 
         /// <summary>
@@ -71,9 +88,13 @@ namespace MyWcfMoments
         /// <param name="note">当前帖子的实体</param>
         /// <returns></returns>
         [OperationContract]
-        public Users GetUserByNote(Notes note)
+        [WebGet]
+        public Users GetUserById(int userId)
         {
-            return db.Users.First(u => u.UserId == note.UserId);
+            using (var db = new ICY_SqlEntities())
+            {
+                return db.Users.FirstOrDefault(u => u.UserId == userId);
+            }
         }
 
         /// <summary>
@@ -82,9 +103,13 @@ namespace MyWcfMoments
         /// <param name="note"></param>
         /// <returns></returns>
         [OperationContract]
-        public bool IsForward(Notes note)
+        [WebGet]
+        public bool IsForward(int noteId)
         {
-            return note.Forward != null;
+            using (var db = new ICY_SqlEntities())
+            {
+                return GetCurrentNote(noteId).Forward != null;
+            }
         }
 
         /// <summary>
@@ -93,11 +118,15 @@ namespace MyWcfMoments
         /// <param name="note"></param>
         /// <returns></returns>
         [OperationContract]
-        public Notes GetForwardedNote(Notes note)
+        [WebGet]
+        public Notes GetForwardedNote(int noteId)
         {
-            Notes n = db.Notes.FirstOrDefault(u => u.NoteId == note.Forward);
-            if (n == null) throw new ArgumentNullException();
-            else return n;
+            using (var db = new ICY_SqlEntities())
+            {
+                Notes note = GetCurrentNote(noteId);
+                Notes n = db.Notes.FirstOrDefault(u => u.NoteId == note.Forward);
+                return n;
+            } 
         }
 
         /// <summary>
@@ -106,22 +135,28 @@ namespace MyWcfMoments
         /// <param name="note"></param>
         /// <returns></returns>
         [OperationContract]
-        public string GetLikesOnNote(Notes note)
+        [WebGet]
+        public string GetLikesOnNote(int noteId)
         {
-            IQueryable<Likes> likes = db.Likes.Where(l => l.NoteId == note.NoteId);
-            var cnt = 0;
-            var ret = "";
-            foreach (var liker in likes)
+            using (var db = new ICY_SqlEntities())
             {
-                if (cnt != 0) { ret += ","; }
-                cnt++;
-                ret += db.Users.First(u => u.UserId == liker.UserId).Nickname;
+                Notes note = GetCurrentNote(noteId);
+                IQueryable<Likes> likes = db.Likes.Where(l => l.NoteId == note.NoteId);
+                var cnt = 0;
+                var ret = "";
+                foreach (var liker in likes)
+                {
+                    if (cnt != 0) { ret += ","; }
+                    cnt++;
+                    ret += db.Users.FirstOrDefault(u => u.UserId == liker.UserId).Nickname;
+                }
+                if (cnt == 0)
+                {
+                    ret = "无";
+                }
+                return ret;
             }
-            if (cnt == 0)
-            {
-                ret = "无";
-            }
-            return ret;
+                
         }
 
         /// <summary>
@@ -131,10 +166,15 @@ namespace MyWcfMoments
         /// <param name="username"></param>
         /// <returns></returns>
         [OperationContract]
-        public bool IsCurrentUserLikesNote(Notes note, string username)
+        [WebGet]
+        public bool IsCurrentUserLikesNote(int noteId, string username)
         {
-            Users user = db.Users.FirstOrDefault(u => u.Email == username);
-            return db.Likes.FirstOrDefault(l => l.UserId == user.UserId && l.NoteId == note.NoteId) != null;
+            using (var db = new ICY_SqlEntities())
+            {
+                Notes note = GetCurrentNote(noteId);
+                Users user = db.Users.FirstOrDefault(u => u.Email == username);
+                return db.Likes.FirstOrDefault(l => l.UserId == user.UserId && l.NoteId == note.NoteId) != null;
+            }
         }
 
         /// <summary>
@@ -143,14 +183,17 @@ namespace MyWcfMoments
         /// <param name="note"></param>
         /// <param name="username"></param>
         [OperationContract]
-        public bool AddLikes(Notes note, string username)
+        [WebGet]
+        public bool AddLikes(int noteId, string username)
         {
-            Users user = db.Users.FirstOrDefault(u => u.Email == username);
-            int noteId = note.NoteId;
-            if (user == null) return false;
-            db.Likes.Add(new Likes { NoteId = noteId, UserId = user.UserId });
-            db.SaveChanges();
-            return true;
+            using (var db = new ICY_SqlEntities())
+            {
+                Users user = db.Users.FirstOrDefault(u => u.Email == username);
+                if (user == null) return false;
+                db.Likes.Add(new Likes { NoteId = noteId, UserId = user.UserId });
+                db.SaveChanges();
+                return true;
+            }         
         }
 
         /// <summary>
@@ -159,14 +202,17 @@ namespace MyWcfMoments
         /// <param name="note"></param>
         /// <param name="username"></param>
         [OperationContract]
-        public bool SubLikes(Notes note, string username)
+        [WebGet]
+        public bool SubLikes(int noteId, string username)
         {
-            Users user = db.Users.FirstOrDefault(u => u.Email == username);
-            int noteId = note.NoteId;
-            if (user == null) return false;
-            db.Likes.Remove(db.Likes.First(l => l.UserId == user.UserId && l.NoteId == noteId));
-            db.SaveChanges();
-            return true;
+            using (var db = new ICY_SqlEntities())
+            {
+                Users user = db.Users.FirstOrDefault(u => u.Email == username);
+                if (user == null) return false;
+                db.Likes.Remove(db.Likes.FirstOrDefault(l => l.UserId == user.UserId && l.NoteId == noteId));
+                db.SaveChanges();
+                return true;
+            }
         }
 
         // 在此处添加更多操作并使用 [OperationContract] 标记它们

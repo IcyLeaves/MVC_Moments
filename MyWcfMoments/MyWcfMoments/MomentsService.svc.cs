@@ -82,6 +82,16 @@ namespace MyWcfMoments
             }
         }
 
+        [OperationContract]
+        [WebGet]
+        public Comments GetCurrentComment(int commentId)
+        {
+            using (var db = new ICY_SqlEntities())
+            {
+                return db.Comments.FirstOrDefault(n => n.CommentId == commentId);
+            }
+        }
+
         /// <summary>
         /// 查询当前帖子的发帖者昵称
         /// </summary>
@@ -94,6 +104,16 @@ namespace MyWcfMoments
             using (var db = new ICY_SqlEntities())
             {
                 return db.Users.FirstOrDefault(u => u.UserId == userId);
+            }
+        }
+
+        [OperationContract]
+        [WebGet]
+        public Users GetUserByEmail(string username)
+        {
+            using (var db = new ICY_SqlEntities())
+            {
+                return db.Users.FirstOrDefault(u => u.Email == username);
             }
         }
 
@@ -184,15 +204,14 @@ namespace MyWcfMoments
         /// <param name="username"></param>
         [OperationContract]
         [WebGet]
-        public bool AddLikes(int noteId, string username)
+        public string AddLikes(int noteId, string username)
         {
             using (var db = new ICY_SqlEntities())
             {
                 Users user = db.Users.FirstOrDefault(u => u.Email == username);
-                if (user == null) return false;
                 db.Likes.Add(new Likes { NoteId = noteId, UserId = user.UserId });
                 db.SaveChanges();
-                return true;
+                return GetLikesOnNote(noteId);
             }         
         }
 
@@ -203,18 +222,96 @@ namespace MyWcfMoments
         /// <param name="username"></param>
         [OperationContract]
         [WebGet]
-        public bool SubLikes(int noteId, string username)
+        public string SubLikes(int noteId, string username)
         {
             using (var db = new ICY_SqlEntities())
             {
                 Users user = db.Users.FirstOrDefault(u => u.Email == username);
-                if (user == null) return false;
                 db.Likes.Remove(db.Likes.FirstOrDefault(l => l.UserId == user.UserId && l.NoteId == noteId));
+                db.SaveChanges();
+                return GetLikesOnNote(noteId);
+            }
+        }
+
+        [OperationContract]
+        [WebGet]
+        public bool CreateNewNote(string text,string username)
+        {
+            using (var db = new ICY_SqlEntities())
+            {
+                Users u = GetUserByEmail(username);
+                if (u == null) return false;
+                Notes n = new Notes() { UserId = u.UserId,Text=text,Forward=null,Time=DateTime.Now };
+                db.Notes.Add(n);
                 db.SaveChanges();
                 return true;
             }
         }
 
+        [OperationContract]
+        [WebGet]
+        public bool CreateForwardNote(string text, string username,int forwardId)
+        {
+            using (var db = new ICY_SqlEntities())
+            {
+                Users u = GetUserByEmail(username);
+                if (u == null) return false;
+                Notes n = new Notes() { UserId = u.UserId, Text = text, Forward = forwardId, Time = DateTime.Now };
+                db.Notes.Add(n);
+                db.SaveChanges();
+                return true;
+            }
+        }
+
+        [OperationContract]
+        [WebGet]
+        public bool CreateNewComment(string text,string username,int noteId)
+        {
+            using (var db = new ICY_SqlEntities())
+            {
+                Users u = GetUserByEmail(username);
+                if (u == null) return false;
+                Comments c = new Comments() { NoteId = noteId, UserId = u.UserId, Text = text, Time = DateTime.Now };
+                db.Comments.Add(c);
+                db.SaveChanges();
+                return true;
+            }
+        }
+
+        [OperationContract]
+        [WebGet]
+        public bool CreateNewChildComment(string text, string username, int noteId,int parentId)
+        {
+            using (var db = new ICY_SqlEntities())
+            {
+                Users u = GetUserByEmail(username);
+                if (u == null) return false;
+                Comments c = new Comments() { NoteId = noteId, UserId = u.UserId, Text = text, Time = DateTime.Now, UnderCommentId=parentId};
+                db.Comments.Add(c);
+                db.SaveChanges();
+                return true;
+            }
+        }
+
+        [OperationContract]
+        [WebGet]
+        public IEnumerable<Comments> GetCommentsOnNote(int noteId)
+        {
+            using (var db = new ICY_SqlEntities())
+            {
+                return db.Comments.Where(c => c.NoteId == noteId && c.UnderCommentId==null).OrderBy(cc => cc.Time).ToList();
+            }
+        }
+
+        [OperationContract]
+        [WebGet]
+        public IEnumerable<Comments> GetChildComments(int parentId)
+        {
+            using (var db = new ICY_SqlEntities())
+            {
+                return db.Comments.Where(c => c.UnderCommentId == parentId).OrderBy(cc=>cc.Time).ToList();
+            }
+        }
         // 在此处添加更多操作并使用 [OperationContract] 标记它们
     }
 }

@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
 <script src="Js/Login.js" type="text/javascript"></script>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>登录</title>

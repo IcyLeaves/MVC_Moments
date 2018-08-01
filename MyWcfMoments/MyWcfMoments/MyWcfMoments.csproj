@@ -104,7 +104,14 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Answer.aspx" />
+    <Content Include="Comment.aspx" />
+    <Content Include="Create.aspx" />
+    <Content Include="Js\Answer.js" />
+    <Content Include="Js\Comment.js" />
+    <Content Include="Js\Create.js" />
     <Content Include="Js\Moments.js" />
+    <Content Include="Js\Reply.js" />
     <Content Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -139,6 +146,7 @@
       <LastGenOutput>MomentsEF.cs</LastGenOutput>
     </Content>
     <Content Include="MomentsService.svc" />
+    <Content Include="Reply.aspx" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
@@ -149,8 +157,29 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Answer.aspx.cs">
+      <DependentUpon>Answer.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Answer.aspx.designer.cs">
+      <DependentUpon>Answer.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Comment.aspx.cs">
+      <DependentUpon>Comment.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Comment.aspx.designer.cs">
+      <DependentUpon>Comment.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Comments.cs">
       <DependentUpon>MomentsEF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Create.aspx.cs">
+      <DependentUpon>Create.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Create.aspx.designer.cs">
+      <DependentUpon>Create.aspx</DependentUpon>
     </Compile>
     <Compile Include="Likes.cs">
       <DependentUpon>MomentsEF.tt</DependentUpon>
@@ -195,6 +224,13 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Reply.aspx.cs">
+      <DependentUpon>Reply.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reply.aspx.designer.cs">
+      <DependentUpon>Reply.aspx</DependentUpon>
     </Compile>
     <Compile Include="Users.cs">
       <DependentUpon>MomentsEF.tt</DependentUpon>

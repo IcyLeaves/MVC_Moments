@@ -280,13 +280,13 @@ namespace MyWcfMoments
 
         [OperationContract]
         [WebGet]
-        public bool CreateNewChildComment(string text, string username, int noteId,int parentId)
+        public bool CreateNewChildComment(string text, string username, int noteId,int parentId,int followId)
         {
             using (var db = new ICY_SqlEntities())
             {
                 Users u = GetUserByEmail(username);
                 if (u == null) return false;
-                Comments c = new Comments() { NoteId = noteId, UserId = u.UserId, Text = text, Time = DateTime.Now, UnderCommentId=parentId};
+                Comments c = new Comments() { NoteId = noteId, UserId = u.UserId, Text = text, Time = DateTime.Now, UnderCommentId=parentId,FollowCommentId=followId};
                 db.Comments.Add(c);
                 db.SaveChanges();
                 return true;
@@ -310,6 +310,17 @@ namespace MyWcfMoments
             using (var db = new ICY_SqlEntities())
             {
                 return db.Comments.Where(c => c.UnderCommentId == parentId).OrderBy(cc=>cc.Time).ToList();
+            }
+        }
+
+        [OperationContract]
+        [WebGet]
+        public Comments GetChildFollowComments(int childCommentId)
+        {
+            using (var db = new ICY_SqlEntities())
+            {
+                Comments childComment = GetCurrentComment(childCommentId);
+                return GetCurrentComment(childComment.FollowCommentId.Value);
             }
         }
         // 在此处添加更多操作并使用 [OperationContract] 标记它们

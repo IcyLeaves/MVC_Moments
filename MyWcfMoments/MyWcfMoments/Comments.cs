@@ -20,5 +20,6 @@ namespace MyWcfMoments
         public string Text { get; set; }
         public System.DateTime Time { get; set; }
         public Nullable<int> UnderCommentId { get; set; }
+        public Nullable<int> FollowCommentId { get; set; }
     }
 }

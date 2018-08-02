@@ -48,7 +48,7 @@ $(document).ready(function () {
             },
             error: function () { }
         });//Commenter=GetUserById(userId Comment.UserId)
-        Div.innerHTML += "<p><b>" + Commenter.Nickname + "：</b>" + Comment.Text + "<a href='javascript:void(0);' onclick='AnswerClick(" + Comment.CommentId + ")' >回复</a></p>";
+        Div.innerHTML += "<p><b>" + Commenter.Nickname + "：</b>" + Comment.Text + "<a href='javascript:void(0);' onclick='AnswerClick(" + Comment.CommentId + ")' style='margin:0px 0px 0px 6px'>回复</a></p>";
         $.ajax({
             url: svcURL + "GetChildComments",
             datatype: "json",
@@ -71,6 +71,8 @@ $(document).ready(function () {
     //专门添加子评论
     function AddChildHtml(noteid, commentid, ChildComment) {
         var Commenter;//评论者
+        var AnswerComment;//回复的评论
+        var Answeror;//回复的评论的评论者
         var InnerDiv = $('#' + noteid + '-comments-' + commentid)[0];
         $.ajax({
             url: svcURL + "GetUserById",
@@ -83,7 +85,30 @@ $(document).ready(function () {
             },
             error: function () { }
         });//Commenter=GetUserById(userId ChildComment.UserId)
-        InnerDiv.innerHTML += "<p><b>" + Commenter.Nickname + "：</b>" + ChildComment.Text + "<a href='javascript:void(0);' onclick='AnswerClick(" + ChildComment.CommentId + ")' >回复</a></p>";
+        $.ajax({
+            url: svcURL + "GetChildFollowComments",
+            datatype: "json",
+            method: "GET",
+            async: false,
+            data: "childCommentId=" + ChildComment.CommentId,
+            success: function (data) {
+                AnswerComment = data.d;
+            },
+            error: function () { }
+        });//AnswerComment=GetChildFollowComments(childCommentId ChildComment.CommentId)
+        $.ajax({
+            url: svcURL + "GetUserById",
+            datatype: "json",
+            method: "GET",
+            async: false,
+            data: "userId=" + AnswerComment.UserId,
+            success: function (data) {
+                Answeror = data.d;
+            },
+            error: function () { }
+        });//Answeror=GetUserById(userId AnswerComment.UserId)
+
+        InnerDiv.innerHTML += "<p><b>" + Commenter.Nickname + "</b> 回复 <b>" +Answeror.Nickname+ "</b>：" + ChildComment.Text + "<a href='javascript:void(0);' onclick='AnswerClick(" + ChildComment.CommentId + ")' style='margin:0px 0px 0px 6px'>回复</a></p>";
     }
     //将一个Note的信息作为一块Html输出，参数strNote是JSON字符串
     function AddNoteHtml(strNote) {
@@ -265,24 +290,6 @@ function CommentClick(id) {
 }
 //"回复"按钮的点击事件
 function AnswerClick(id) {
-    var Comment;
-    $.ajax({
-        url: "http://localhost:60067/MomentsService.svc/GetCurrentComment",
-        type: "GET",
-        data: "commentId=" + id,
-        dataType: "json",
-        async: false,
-        error: function () { alert("error") },
-        success: function (data) {
-            Comment = data.d;
-            //alert(JSON.stringify(Note));
-        }
-    });//Comment=GetCurrentComment(commentId id)
-    if (Comment.UnderCommentId != null) {
-        sessionStorage.setItem("answerid", Comment.UnderCommentId);
-    }
-    else {
         sessionStorage.setItem("answerid", id);
-    }
     window.location.href = "Answer.aspx";
 }

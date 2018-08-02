@@ -8,6 +8,7 @@
 </head>
 <body>
     <p id="user"></p>
+    <a href="Login.aspx">注销</a>
     <h2>朋友圈</h2>
     <a href="Create.aspx">发布朋友圈</a>
     <hr style="height:1px;border:none;border-top:1px solid #555555;" />

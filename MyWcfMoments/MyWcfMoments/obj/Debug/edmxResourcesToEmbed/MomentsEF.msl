@@ -4,6 +4,7 @@
     <EntitySetMapping Name="Comments">
       <EntityTypeMapping TypeName="ICY_SqlModel.Comments">
         <MappingFragment StoreEntitySet="Comments">
+          <ScalarProperty Name="FollowCommentId" ColumnName="FollowCommentId" />
           <ScalarProperty Name="CommentId" ColumnName="CommentId" />
           <ScalarProperty Name="NoteId" ColumnName="NoteId" />
           <ScalarProperty Name="UserId" ColumnName="UserId" />

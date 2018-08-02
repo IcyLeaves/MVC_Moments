@@ -10,6 +10,7 @@
     <Property Name="Text" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Time" Type="datetime2" Precision="0" Nullable="false" />
     <Property Name="UnderCommentId" Type="int" />
+    <Property Name="FollowCommentId" Type="int" />
   </EntityType>
   <EntityType Name="Likes">
     <Key>

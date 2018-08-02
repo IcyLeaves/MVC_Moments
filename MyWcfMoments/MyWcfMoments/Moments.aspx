@@ -1,18 +1,18 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Moments.aspx.cs" Inherits="MyWcfMoments.Moments" %>
-
-<!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+﻿<!DOCTYPE html>
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
+<script src="Js/Moments.js" type="text/javascript"></script>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>朋友圈</title>
 </head>
 <body>
-    <p id="welcome" runat="server"></p>
-    <form id="form1" runat="server">
-    <div>
-        
-    </div>
-    </form>
+    <p id="user"></p>
+    <a href="Login.aspx">注销</a>
+    <h2>朋友圈</h2>
+    <a href="Create.aspx">发布朋友圈</a>
+    <hr style="height:1px;border:none;border-top:1px solid #555555;" />
+
+    <div id="content"></div>
 </body>
 </html>

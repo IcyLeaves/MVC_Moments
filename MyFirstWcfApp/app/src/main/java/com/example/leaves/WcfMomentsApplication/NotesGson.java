@@ -1,7 +1,9 @@
 package com.example.leaves.WcfMomentsApplication;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class NotesGson {
 
@@ -55,8 +57,19 @@ public class NotesGson {
             this.Text = Text;
         }
 
-        public Date getTime() {
-            return new Date(Integer.parseInt(Time.replace("/Date(", "").replace(")/", ""),10));
+        public String getTime() {
+            try {
+                SimpleDateFormat hms = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                hms.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
+                Date tTime = new Date(Long.parseLong(Time.replace("/Date(", "").replace("+0800)/", ""), 10));//跑步用时
+                String totalTime = hms.format(tTime);
+                return totalTime;
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return null;
         }
 
         public void setTime(String Time) {

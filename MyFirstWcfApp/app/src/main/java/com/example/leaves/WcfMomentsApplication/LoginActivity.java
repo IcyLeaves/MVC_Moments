@@ -26,6 +26,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         findViewById(R.id.btn_login).setOnClickListener(this);
+
     }
 
     @Override
@@ -35,13 +36,15 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 new Thread() {
                     @Override
                     public void run() {
-                        String result = getDataByHttp();
+                        EditText user = findViewById(R.id.et_username);
+                        EditText pass = findViewById(R.id.et_password);
+                        String url_path = "http://10.0.2.2:8010/Moments.svc/LoginIn?Email=" + user.getText().toString() + "&password=" + pass.getText().toString();
+                        String result = getDataByHttp(url_path);
                         Gson gson = new Gson();
                         BooleanGson data = gson.fromJson(result, BooleanGson.class);
                         if (data.isD()) {
                             Intent intent = new Intent(LoginActivity.this, MomentsActivity.class);
-                            EditText et = findViewById(R.id.et_username);
-                            intent.putExtra("username", et.getText().toString());
+                            intent.putExtra("username", user.getText().toString());
                             startActivity(intent);
                         }
 
@@ -51,10 +54,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private String getDataByHttp() {
-        EditText user = findViewById(R.id.et_username);
-        EditText pass = findViewById(R.id.et_password);
-        String url_path = "http://10.0.2.2:8010/Moments.svc/LoginIn?Email=" + user.getText().toString() + "&password=" + pass.getText().toString();
+    private String getDataByHttp(String url_path) {
         try {
             //使用该地址创建一个 URL 对象
             URL url = new URL(url_path);

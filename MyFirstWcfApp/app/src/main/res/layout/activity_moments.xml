@@ -6,11 +6,18 @@
     <!--Title Bar-->
     <include layout="@layout/main_title_bar" />
     <!--LinearLayout: All Ordered Notes-->
-    <LinearLayout
-        android:id="@+id/moments_noteLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-    </LinearLayout>
+    <ScrollView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+        <LinearLayout
+            android:id="@+id/moments_noteLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:orientation="vertical"
+        />
+    </ScrollView>
+
 
 </LinearLayout>

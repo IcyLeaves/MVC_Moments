@@ -21,6 +21,7 @@ import java.net.URL;
 //                .show();
 public class LoginActivity extends Activity implements View.OnClickListener {
 
+    final private String urlPrefix="http://10.0.2.2:8010/Moments.svc/";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +39,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                     public void run() {
                         EditText user = findViewById(R.id.et_username);
                         EditText pass = findViewById(R.id.et_password);
-                        String url_path = "http://10.0.2.2:8010/Moments.svc/LoginIn?Email=" + user.getText().toString() + "&password=" + pass.getText().toString();
+                        String url_path = urlPrefix+"LoginIn?Email=" + user.getText().toString() + "&password=" + pass.getText().toString();
                         String result = getDataByHttp(url_path);
                         Gson gson = new Gson();
                         BooleanGson data = gson.fromJson(result, BooleanGson.class);

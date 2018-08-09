@@ -7,4 +7,5 @@
     <string name="login_login_btn">登 录</string>
     <string name="login_title_login">登录</string>
     <string name="login_title_back">返回</string>
+    <string name="moments_likes_format">点赞者：%1$s</string>
 </resources>

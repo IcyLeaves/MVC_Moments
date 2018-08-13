@@ -7,7 +7,7 @@
     android:background="@color/colorPrimary">
 
     <TextView
-        android:id="@+id/tv_back"
+        android:id="@+id/tv_create_back"
         android:layout_width="wrap_content"
         android:layout_height="25dp"
         android:layout_alignParentStart="true"
@@ -15,30 +15,23 @@
         android:clickable="true"
         android:drawableStart="@drawable/sl_title_back"
         android:focusable="true"
-        android:text="@string/login_title_back"
+        android:text="@string/create_title_back"
         android:textColor="@drawable/sl_title_back"
         android:textSize="18sp"
-        tools:ignore="RelativeOverlap" />
+        />
 
     <TextView
-        android:id="@+id/tv_main_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="@string/login_title_login"
-        android:textColor="@color/colorWhite"
-        android:textSize="18sp"
-        tools:ignore="RelativeOverlap"/>
-
-    <TextView
-        android:id="@+id/tv_username"
+        android:id="@+id/tv_create_submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="10dp"
-        android:text="嘻嘻"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="@string/create_title_submit"
         android:textColor="@color/colorWhite"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        tools:ignore="RelativeOverlap"/>
 
 </RelativeLayout>

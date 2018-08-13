@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <!--Title Bar-->
-    <include layout="@layout/main_title_bar" />
+    <include layout="@layout/login_title_bar" />
     <!--EditBox: Username-->
     <EditText
         android:id="@+id/et_username"

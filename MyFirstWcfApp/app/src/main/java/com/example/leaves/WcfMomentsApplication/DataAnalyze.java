@@ -52,6 +52,20 @@ public class DataAnalyze {
         return "";
     }
 
+    NoteGson.DBean getCurrentNote(int noteId)
+    {
+        String theNote=getDataByHttp(urlPrefix+"GetCurrentNote?noteId="+noteId);
+        NoteGson data=gson.fromJson(theNote,NoteGson.class);
+        return data.getD();
+    }
+
+    boolean loginIn(String Email,String password)
+    {
+        String theBool=getDataByHttp(urlPrefix+"LoginIn?Email="+Email+"&password="+password);
+        BooleanGson data=gson.fromJson(theBool,BooleanGson.class);
+        return data.isD();
+    }
+
     UsersGson.DBean getUserByEmail(String username) {
         String theUser = getDataByHttp(urlPrefix + "GetUserByEmail?username=" + username);
         UsersGson data = gson.fromJson(theUser, UsersGson.class);
@@ -83,11 +97,27 @@ public class DataAnalyze {
     }
 
     void subLikes(int noteId, String username) {
-        getDataByHttp(urlPrefix + "SubLikes/noteId=" + noteId + "&username=" + username);
+        getDataByHttp(urlPrefix + "SubLikes?noteId=" + noteId + "&username=" + username);
     }
 
     void addLikes(int noteId, String username) {
-        getDataByHttp(urlPrefix + "AddLikes/noteId=" + noteId + "&username=" + username);
+        getDataByHttp(urlPrefix + "AddLikes?noteId=" + noteId + "&username=" + username);
     }
 
+    void createNewNote(String text,String username)
+    {
+        getDataByHttp(urlPrefix+"CreateNewNote?text="+text+"&username="+username);
+    }
+
+    NoteGson.DBean getForwardedNote(int noteId)
+    {
+        String note=getDataByHttp(urlPrefix+"GetForwardedNote?noteId="+noteId);
+        NoteGson data=gson.fromJson(note,NoteGson.class);
+        return data.getD();
+    }
+
+    void createForwardNote(String text,String username,int forwardId)
+    {
+        getDataByHttp(urlPrefix+"CreateForwardNote?text="+text+"&username="+username+"&forwardId="+forwardId);
+    }
 }

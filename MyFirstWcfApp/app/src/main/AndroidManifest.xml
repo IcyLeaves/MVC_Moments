@@ -18,6 +18,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".MomentsActivity" />
+        <activity android:name=".CreateActivity" />
+        <activity android:name=".ForwardActivity" />
     </application>
 
 </manifest>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <!--Title Bar-->
+    <include layout="@layout/forward_title_bar" />
+
+    <TextView
+        android:id="@+id/tv_forward_origin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="@color/colorBlack"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@color/colorLightGray"
+        android:text="@string/forward_origin_hint"
+        android:padding="6dp"
+        android:gravity="top"/>
+
+    <EditText
+        android:id="@+id/et_forward"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:inputType="textMultiLine"
+        android:hint="@string/forward_text_hint"
+        android:background="@null"
+        android:gravity="top"/>
+
+    <!--LinearLayout: All Ordered Notes-->
+</LinearLayout>

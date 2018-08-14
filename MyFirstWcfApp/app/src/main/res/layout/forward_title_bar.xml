@@ -30,7 +30,7 @@
         android:clickable="true"
         android:focusable="true"
         android:text="@string/forward_title_submit"
-        android:textColor="@color/colorWhite"
+        android:textColor="@drawable/sl_title_back"
         android:textSize="18sp"
         tools:ignore="RelativeOverlap"/>
 

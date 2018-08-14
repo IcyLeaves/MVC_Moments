@@ -120,4 +120,40 @@ public class DataAnalyze {
     {
         getDataByHttp(urlPrefix+"CreateForwardNote?text="+text+"&username="+username+"&forwardId="+forwardId);
     }
+
+    void createNewComment(String text,String username,int noteId)
+    {
+        getDataByHttp(urlPrefix+"CreateNewComment?text="+text+"&username="+username+"&noteId="+noteId);
+    }
+
+    CommentGson.DBean getCurrentComment(int commentId)
+    {
+        String theComment=getDataByHttp(urlPrefix+"GetCurrentComment?commentId="+commentId);
+        CommentGson data=gson.fromJson(theComment,CommentGson.class);
+        return data.getD();
+    }
+
+    List<CommentsGson.DBean> getCommentsOnNote(int noteId)
+    {
+        String theComments=getDataByHttp(urlPrefix+"GetCommentsOnNote?noteId="+noteId);
+        CommentsGson data=gson.fromJson(theComments,CommentsGson.class);
+        return data.getD();
+    }
+
+    List<CommentsGson.DBean> getChildComments(int parentId)
+    {
+        String theChild=getDataByHttp(urlPrefix+"GetChildComments?parentId="+parentId);
+        CommentsGson data=gson.fromJson(theChild,CommentsGson.class);
+        return data.getD();
+    }
+
+    CommentGson.DBean getChildFollowComments(int childCommentId){
+        String theFollow=getDataByHttp(urlPrefix+"GetChildFollowComments?childCommentId="+childCommentId);
+        CommentGson data=gson.fromJson(theFollow,CommentGson.class);
+        return data.getD();
+    }
+
+    void createNewChildComment(String text,String username,int noteId,int parentId,int followId){
+        getDataByHttp(urlPrefix+"CreateNewChildComment?text="+text+"&username="+username+"&noteId="+noteId+"&parentId="+parentId+"&followId="+followId);
+    }
 }

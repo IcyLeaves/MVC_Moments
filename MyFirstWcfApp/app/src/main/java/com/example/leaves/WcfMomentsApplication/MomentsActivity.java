@@ -2,29 +2,21 @@ package com.example.leaves.WcfMomentsApplication;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.style.TextAppearanceSpan;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,10 +122,27 @@ public class MomentsActivity extends Activity implements View.OnClickListener {
                 break;
             default:
                 if (((String) view.getTag()).contains("forward")) {
-                    String[] strings = ((String)view.getTag()).split("&");
+                    String[] strings = ((String) view.getTag()).split("&");
                     Intent intent2 = new Intent(MomentsActivity.this, ForwardActivity.class);
                     intent2.putExtra("username", loginUser.getEmail());
-                    intent2.putExtra("noteId",strings[1]);
+                    intent2.putExtra("noteId", strings[1]);
+                    intent2.putExtra("scrollLocation",findViewById(R.id.moments_scroll).getScrollY());
+                    startActivity(intent2);
+                }
+                if (((String) view.getTag()).contains("comment")) {
+                    String[] strings = ((String) view.getTag()).split("&");
+                    Intent intent2 = new Intent(MomentsActivity.this, CommentActivity.class);
+                    intent2.putExtra("username", loginUser.getEmail());
+                    intent2.putExtra("noteId", strings[1]);
+                    intent2.putExtra("scrollLocation",findViewById(R.id.moments_scroll).getScrollY());
+                    startActivity(intent2);
+                }
+                if(((String)view.getTag()).contains("reply")){
+                    String[] strings = ((String) view.getTag()).split("&");
+                    Intent intent2 = new Intent(MomentsActivity.this, ReplyActivity.class);
+                    intent2.putExtra("username", loginUser.getEmail());
+                    intent2.putExtra("commentId", strings[1]);
+                    intent2.putExtra("scrollLocation",findViewById(R.id.moments_scroll).getScrollY());
                     startActivity(intent2);
                 }
                 break;
@@ -166,8 +175,17 @@ public class MomentsActivity extends Activity implements View.OnClickListener {
                     addTextView_Likes("点赞者：" + likes, note.getNoteId());
                     //从左到右依次是 点赞 转发 评论
                     addOperations(isLiked, note.getNoteId());
+                    //"评论内容"
+                    List<CommentsGson.DBean> parentComments = DA.getCommentsOnNote(note.getNoteId());
+                    if (parentComments.size() != 0) {
+                        addComment(parentComments);
+                    }
                     //加根线
                     addLine();
+                }
+                if(getIntent().getIntExtra("scrollLocation",-1)!=-1)
+                {
+                    setScroll(getIntent().getIntExtra("scrollLocation",-1));
                 }
             }
         }.start();
@@ -321,6 +339,7 @@ public class MomentsActivity extends Activity implements View.OnClickListener {
 
         imgBtn_comment.setTag("comment&" + id);
         imgBtn_comment.setBackgroundResource(R.drawable.sl_moments_comment);
+        imgBtn_comment.setOnClickListener(this);
 
         int icon_margin = 20;
         iconParams.setMarginEnd(icon_margin);
@@ -334,6 +353,97 @@ public class MomentsActivity extends Activity implements View.OnClickListener {
                 ly.addView(ly_operation, params);
             }
         });
+    }
 
+    private void addComment(final List<CommentsGson.DBean> pComments) {
+        final LinearLayout ll = new LinearLayout(MomentsActivity.this);
+        //ll.setBackgroundResource(R.color.colorLightGray);
+        ll.setOrientation(LinearLayout.VERTICAL);
+        final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(textView_margin,0,textView_margin,0);
+        for (int i = 0; i < pComments.size(); i++) {
+            CommentsGson.DBean currentComment = pComments.get(i);
+            final LinearLayout ll_parent = new LinearLayout(MomentsActivity.this);
+            //ll_parent.setBackgroundResource(R.color.colorHintGray);
+            ll_parent.setOrientation(LinearLayout.VERTICAL);
+            final LinearLayout.LayoutParams params_parent = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            params_parent.setMargins(5, 0, 5, 0);
+            final TextView tv_parent = new TextView(MomentsActivity.this);
+            String parentNickname = DA.getUserById(currentComment.getUserId()).getNickname();
+            String parentText = parentNickname + "：" + currentComment.getText();
+            tv_parent.setText(parentText);
+            tv_parent.setTextColor(Color.BLACK);
+            tv_parent.setTextSize(15);
+            tv_parent.setClickable(true);
+            tv_parent.setFocusable(true);
+            tv_parent.setBackgroundResource(R.drawable.sl_moments_follow);
+            tv_parent.setTag("reply&"+currentComment.getCommentId());
+            tv_parent.setOnClickListener(this);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ll_parent.addView(tv_parent, params_parent);
+                }
+            });
+            List<CommentsGson.DBean> childComments = DA.getChildComments(currentComment.getCommentId());
+            if (childComments.size() != 0) {
+                final LinearLayout ll_child = new LinearLayout(MomentsActivity.this);
+                //ll_child.setBackgroundResource(R.color.colorLightWhite);
+                ll_child.setOrientation(LinearLayout.VERTICAL);
+                final LinearLayout.LayoutParams params_child = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                params_child.setMargins(50, 5, 5, 5);
+                for (int j = 0; j < childComments.size(); j++) {
+                    CommentsGson.DBean currentChild = childComments.get(j);
+
+                    final TextView tv_child = new TextView(MomentsActivity.this);
+                    String childNickname1 = DA.getUserById(currentChild.getUserId()).getNickname();
+                    String childNickname2 = DA.getUserById(DA.getChildFollowComments(currentChild.getCommentId()).getUserId()).getNickname();
+                    String childText = childNickname1 + " 回复 " + childNickname2 + "：" + currentChild.getText();
+                    tv_child.setText(childText);
+                    tv_child.setTextColor(Color.BLACK);
+                    tv_child.setTextSize(15);
+                    tv_child.setBackgroundResource(R.drawable.sl_moments_follow);
+                    tv_child.setClickable(true);
+                    tv_child.setFocusable(true);
+                    tv_child.setTag("reply&"+currentChild.getCommentId());
+                    tv_child.setOnClickListener(this);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ll_child.addView(tv_child);
+                        }
+                    });
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ll_parent.addView(ll_child, params_child);
+                    }
+                });
+            }
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ll.addView(ll_parent, params_parent);
+                }
+            });
+        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ly.addView(ll, params);
+            }
+        });
+    }
+
+    private void setScroll(final int y)
+    {
+        final ScrollView sv=findViewById(R.id.moments_scroll);
+        sv.post(new Runnable() {
+            @Override
+            public void run() {
+                sv.scrollTo(0,y);
+            }
+        });
     }
 }

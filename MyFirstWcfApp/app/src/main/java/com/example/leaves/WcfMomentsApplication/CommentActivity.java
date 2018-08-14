@@ -7,25 +7,23 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
-public class ForwardActivity extends Activity implements View.OnClickListener {
+public class CommentActivity extends Activity implements View.OnClickListener {
     final private DataAnalyze DA = new DataAnalyze();
     private String loginUsername;
     private int scrollLocation;
-    private int replyId;
+    private int commentTo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_forward);
+        setContentView(R.layout.activity_comment);
         Intent intent=getIntent();
         loginUsername=intent.getStringExtra("username");
         scrollLocation=intent.getIntExtra("scrollLocation",-1);
-        int noteId=Integer.parseInt(intent.getStringExtra("noteId"));
-        initUI(noteId);
-        findViewById(R.id.tv_forward_submit).setOnClickListener(this);
-        findViewById(R.id.tv_forward_back).setOnClickListener(this);
+        commentTo=Integer.parseInt(intent.getStringExtra("noteId"));
+        initUI();
+        findViewById(R.id.tv_comment_submit).setOnClickListener(this);
+        findViewById(R.id.tv_comment_back).setOnClickListener(this);
     }
 
     @Override
@@ -33,15 +31,15 @@ public class ForwardActivity extends Activity implements View.OnClickListener {
     {
         switch (v.getId())
         {
-            case R.id.tv_forward_back:
-                Intent intent=new Intent(ForwardActivity.this,MomentsActivity.class);
+            case R.id.tv_reply_back:
+                Intent intent=new Intent(CommentActivity.this,MomentsActivity.class);
                 intent.putExtra("username",loginUsername);
                 intent.putExtra("scrollLocation",scrollLocation);
                 startActivity(intent);
                 break;
-            case R.id.tv_forward_submit:
-                SubmitNewNote();
-                Intent intent1=new Intent(ForwardActivity.this,MomentsActivity.class);
+            case R.id.tv_reply_submit:
+                SubmitNewComment();
+                Intent intent1=new Intent(CommentActivity.this,MomentsActivity.class);
                 intent1.putExtra("username",loginUsername);
                 intent1.putExtra("scrollLocation",scrollLocation);
                 startActivity(intent1);
@@ -49,41 +47,29 @@ public class ForwardActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void SubmitNewNote()
+    private void SubmitNewComment()
     {
         new Thread(){
             @Override
             public void run()
             {
-                EditText et=findViewById(R.id.et_forward);
-                DA.createForwardNote(et.getText().toString(),loginUsername,replyId);
+                EditText et=findViewById(R.id.et_comment);
+                DA.createNewComment(et.getText().toString(),loginUsername,commentTo);
             }
         }.start();
     }
 
-    private void initUI(final int noteId)
+    private void initUI()
     {
         new Thread(){
             @Override
             public void run()
             {
-                NoteGson.DBean currentNote=DA.getCurrentNote(noteId);
-                NoteGson.DBean forwardNote;
-                if(currentNote.getForward()!=null)
-                {
-                    forwardNote=DA.getForwardedNote(noteId);
-                    replyId=forwardNote.getNoteId();
-                }
-                else
-                {
-                    forwardNote=currentNote;
-                    replyId=currentNote.getNoteId();
-                }
-                final String forwardContent = forwardNote.getText();
+                final String forwardContent = DA.getCurrentNote(commentTo).getText();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        TextView tv_origin = findViewById(R.id.tv_forward_origin);
+                        TextView tv_origin = findViewById(R.id.tv_comment_origin);
                         String text = tv_origin.getText().toString() + forwardContent;
                         tv_origin.setText(text);
                     }
